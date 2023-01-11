@@ -27,22 +27,35 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         ArrayList<AthleteEvents> athleteEvents = getAthleteEventsData();
-        findGoldMedalsPerPlayerPerYear(athleteEvents);
+       findGoldMedalsPerPlayerPerYear(athleteEvents);
         findAthletesWonGoldMedal(athleteEvents);
         findGoldWinnerOfFootball(athleteEvents);
         findHighestFemaleAthleteWonGold(athleteEvents);
         findEventWiseMedals(athleteEvents);
         findAthleteParticipatedThreeOlympics(athleteEvents);
+        findFemaleAthletes(athleteEvents);
     }
 
-    private static void findAthleteParticipatedThreeOlympics(ArrayList<AthleteEvents> athleteEvents) {
+    private static void findFemaleAthletes(ArrayList<AthleteEvents> athleteEvents) {
+        List<String> femaleName = new LinkedList<>();
+        for(AthleteEvents athleteEvent : athleteEvents){
+
+            if(athleteEvent.getSex() == 'F' && athleteEvent.getTeam().equals("China") && athleteEvent.getAge() < 25 ){
+                String name = athleteEvent.getName();
+                femaleName.add(name);
+            }
+        }
+        System.out.println(femaleName);
+    }
+
+    public static List<String> findAthleteParticipatedThreeOlympics(ArrayList<AthleteEvents> athleteEvents) {
         Set<Integer> years = new HashSet<>();
         HashMap<String, List<Integer>> player = new HashMap<>();
         for (AthleteEvents athleteEvent : athleteEvents) {
             years.add(athleteEvent.getYear());
         }
-        for (AthleteEvents athleteEvent : athleteEvents) {
-            for (Integer year : years){
+        for (Integer year : years){
+            for (AthleteEvents athleteEvent : athleteEvents) {
                 if(athleteEvent.getYear() == year) {
                     if (player.containsKey(athleteEvent.getName())) {
                         if (!player.get(athleteEvent.getName()).contains(year)) {
@@ -58,16 +71,15 @@ public class Main {
         Set<String> names = player.keySet();
         List<String> players = new LinkedList<>();
         for(String name:names){
-            if(player.containsKey(name) && player.get(name).size()>=3){
+            if(player.containsKey(name) && player.get(name).size()>3){
                 players.add(name);
             }
         }
-        for(String playerName:players){
-            System.out.println(playerName);
-        }
+            return players;
     }
 
-    private static void findEventWiseMedals(ArrayList<AthleteEvents> athleteEvents) {
+
+    public static  HashMap<String, HashMap<String, Integer>> findEventWiseMedals(List<AthleteEvents> athleteEvents) {
         HashMap<String, HashMap<String, Integer>> eventWiseMedals = new HashMap<>();
         for (AthleteEvents athleteEvent : athleteEvents) {
             if (athleteEvent.getYear() == 1980) {
@@ -112,12 +124,10 @@ public class Main {
                 }
             }
         }
-        for (HashMap.Entry<String, HashMap<String, Integer>> medals : eventWiseMedals.entrySet()) {
-            System.out.println(medals);
-        }
+        return eventWiseMedals;
     }
 
-    private static void findHighestFemaleAthleteWonGold(ArrayList<AthleteEvents> athleteEvents) {
+    public static Map<String, Integer> findHighestFemaleAthleteWonGold(List<AthleteEvents> athleteEvents) {
         HashMap<String , Integer> femaleAthleteGold = new HashMap<>();
         for(AthleteEvents athleteEvent : athleteEvents){
             if(athleteEvent.getSex() == 'F' && athleteEvent.getMedal().equals("Gold")){
@@ -144,10 +154,10 @@ public class Main {
                 femaleAthleteWonGold.put(name, goldCount);
             }
         }
-       System.out.println(femaleAthleteWonGold);
+        return femaleAthleteWonGold;
     }
 
-    private static void findGoldWinnerOfFootball(ArrayList<AthleteEvents> athleteEvents) {
+    public static Map<Integer, Set<String>> findGoldWinnerOfFootball(ArrayList<AthleteEvents> athleteEvents) {
         Map<Integer, Set<String>> goldWinnerOfFootball = new HashMap<>();
         for(AthleteEvents athleteEvent: athleteEvents){
             if(athleteEvent.getSport().equals("Football")){
@@ -163,12 +173,10 @@ public class Main {
                 }
             }
         }
-        for (Map.Entry<Integer, Set<String>> goldWinnerFootball :goldWinnerOfFootball.entrySet()) {
-           System.out.println(goldWinnerFootball);
-        }
+        return goldWinnerOfFootball;
     }
 
-    private static void findAthletesWonGoldMedal(ArrayList<AthleteEvents> athleteEvents) {
+    public static List<String> findAthletesWonGoldMedal(ArrayList<AthleteEvents> athleteEvents) {
         List<String> athlete = new LinkedList<>();
         for (AthleteEvents athleteEvent : athleteEvents) {
                 if (athleteEvent.getYear() == 1980 && (athleteEvent.getAge() > 0 && athleteEvent.getAge() < 30) && athleteEvent.getMedal().equals("Gold")) {
@@ -176,10 +184,10 @@ public class Main {
                     athlete.add(name);
                 }
         }
-        System.out.println(athlete);
+        return athlete;
     }
 
-    private static void findGoldMedalsPerPlayerPerYear(ArrayList<AthleteEvents> athleteEvents) {
+    public static Map<Integer, Map<String, Integer>> findGoldMedalsPerPlayerPerYear(ArrayList<AthleteEvents> athleteEvents) {
         Map<Integer, Map<String, Integer>> goldPlayerPerYear = new HashMap<>();
         for(AthleteEvents athleteEvent : athleteEvents){
             if(athleteEvent.getMedal().equals("Gold")){
@@ -199,12 +207,11 @@ public class Main {
                 }
             }
         }
-        for(Map.Entry<Integer, Map<String, Integer>> goldMedalsPerPlayerPerYear: goldPlayerPerYear.entrySet()){
-           System.out.println(goldMedalsPerPlayerPerYear);
-        }
+        return goldPlayerPerYear;
+
     }
 
-    private static ArrayList<AthleteEvents> getAthleteEventsData() throws IOException {
+    public static ArrayList<AthleteEvents> getAthleteEventsData() throws IOException {
         String filePath = "/home/dell/Downloads/athlete_events.csv";
         CSVReader Reader = new CSVReader(new FileReader(filePath));
         String[] csvHeader = Reader.readNext();
